@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const cors = require('cors');
 app.use(cors({
-    origin: `http://${process.env.LOCAL_IP}:${process.env.FORNTEND_PORT}`,
+    origin: `http://localhost:3001`,
     credentials: true,
   }));
 
