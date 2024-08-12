@@ -66,7 +66,7 @@ module.exports.addItem = (req, res) => { //Add libro
         idioma: req.body.idioma,
         tipo: req.body.tipo,
         ubicacion: req.body.ubicacion,
-        instrumento_asociado: req.body.intrumento_asociado,
+        instrumento_asociado: (req.body.intrumento_asociado) ? req.body.instrumento_asociado : 'NC',
         autor: (req.body.autor) ? req.body.autor : 'NC',
         editorial: (req.body.editorial) ? req.body.editorial : 'NC',
         year: (req.body.year) ? req.body.year : 0
