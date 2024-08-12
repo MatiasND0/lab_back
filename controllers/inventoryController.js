@@ -22,38 +22,81 @@ module.exports.inventory = (req, res) => {
 };
 
 
-module.exports.addItem = (req, res) => {
+// module.exports.addItem = (req, res) => {
 
-    const table = req.body.table;
-    var sql = '';
+//     const table = req.body.table;
+//     var sql = '';
 
-    const { nro_inv, cod_rec, marca, modelo, sn, estado, fecha_ingreso, vga, hdmi, adicionales } = req.body;
-    const { id, descripcion, idioma, tipo, ubicacion, instrumento_asociado } = req.body;
+//     const { nro_inv, cod_rec, marca, modelo, sn, estado, fecha_ingreso, vga, hdmi, adicionales } = req.body;
+//     const { id, descripcion, idioma, tipo, ubicacion, instrumento_asociado } = req.body;
 
-    switch (table) {
-        case 'proyectores':
-            sql = 'INSERT INTO proyectores (nro_inv, cod_rec, marca, modelo, sn, estado, ubicacion, fecha_ingreso, vga, hdmi, adicionales) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )';
-            connection.query(sql, [nro_inv, cod_rec, marca, modelo, sn, estado, ubicacion, fecha_ingreso, vga, hdmi, adicionales], (err, results) => {
-                if (err) {
-                    return res.status(500).json({ message: 'Error al agregar el elemento' });
-                }
-                res.status(201).json({ message: 'Elemento agregado exitosamente', id: results.insertId });
-            });
-            break;
-        case 'libros':
-            sql = 'INSERT INTO libros (id, descripcion, idioma, tipo, ubicacion, instrumento_asociado) VALUES (?, ?, ?, ?, ?, ?)';
-            connection.query(sql, [id, descripcion, idioma, tipo, ubicacion, instrumento_asociado], (err, results) => {
-                if (err) {
-                    return res.status(500).json({ message: 'Error al agregar el elemento' });
-                }
-                res.status(201).json({ message: 'Elemento agregado exitosamente', id: results.insertId });
-            });
-            break;
-        default:
-            break;
-    }
+//     switch (table) {
+//         case 'proyectores':
+//             sql = 'INSERT INTO proyectores (nro_inv, cod_rec, marca, modelo, sn, estado, ubicacion, fecha_ingreso, vga, hdmi, adicionales) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )';
+//             connection.query(sql, [nro_inv, cod_rec, marca, modelo, sn, estado, ubicacion, fecha_ingreso, vga, hdmi, adicionales], (err, results) => {
+//                 if (err) {
+//                     return res.status(500).json({ message: 'Error al agregar el elemento' });
+//                 }
+//                 res.status(201).json({ message: 'Elemento agregado exitosamente', id: results.insertId });
+//             });
+//             break;
+//         case 'libros':
+//             sql = 'INSERT INTO libros (id, descripcion, idioma, tipo, ubicacion, instrumento_asociado) VALUES (?, ?, ?, ?, ?, ?)';
+//             connection.query(sql, [id, descripcion, idioma, tipo, ubicacion, instrumento_asociado], (err, results) => {
+//                 if (err) {
+//                     return res.status(500).json({ message: 'Error al agregar el elemento' });
+//                 }
+//                 res.status(201).json({ message: 'Elemento agregado exitosamente', id: results.insertId });
+//             });
+//             break;
+//         default:
+//             break;
+//     }
 
-};
+// };
+
+module.exports.addItem = (req, res) => { //Add libro
+
+    console.log(req.body);
+
+    let sqlBody = {
+        id: 0,
+        titulo: req.body.titulo,
+        descripcion: req.body.descripcion,
+        idioma: req.body.idioma,
+        tipo: req.body.tipo,
+        ubicacion: req.body.ubicacion,
+        instrumento_asociado: req.body.intrumento_asociado,
+        autor: (req.body.autor) ? req.body.autor : 'NC',
+        editorial: (req.body.editorial) ? req.body.editorial : 'NC',
+        year: (req.body.year) ? req.body.year : 0
+    };
+
+    var sql = `SELECT MAX(CAST(SUBSTRING(ID, 5) AS UNSIGNED)) AS max_id
+                FROM libros
+                WHERE ID LIKE '${((req.body.tipo === 'manual') ? req.body.equipo : req.body.tipo)}-%';`;
+
+    connection.query(sql, [], (err, results) => {
+        if (err) {
+            console.error('Error ejecutando la consulta: ', err);
+            res.status(500).send('Error ejecutando la consulta');
+            return;
+        }
+        sqlBody.id = ((req.body.tipo === 'manual') ? req.body.equipo : req.body.tipo) + '-' + (results[0].max_id+1).toString().padStart(5, '0');;
+
+        var sql = `INSERT INTO libros (id, titulo, descripcion, idioma, tipo, ubicacion, instrumento_asociado, autor, editorial, year) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? )`;
+        console.log(Object.values(sqlBody))
+        connection.query(sql, Object.values(sqlBody), (err, results) => {
+            if (err) {
+                console.log(err)
+                return res.status(500).json({ message: 'Error al agregar el elemento' });
+            }
+            res.status(201).json({ message: 'Elemento agregado exitosamente', id: results.insertId });
+        });
+
+    })
+}
+
 
 
 module.exports.removeItem = (req, res) => {
