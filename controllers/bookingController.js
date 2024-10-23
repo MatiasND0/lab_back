@@ -77,8 +77,6 @@ module.exports.bookProy = (req, res) => {
                     const unavailableCodRec = availabilityResults.map(row => row.cod_rec);
                     const availableCodRec = cod_recs.filter(cod_rec => !unavailableCodRec.includes(cod_rec));
 
-                    console.log({ availableCodRec });
-
                     // Asegúrate de que hay al menos un cod_rec disponible
                     if (availableCodRec.length > 0) {
                         hdmiCodRec = availableCodRec[0]; // Obtiene el primer proyector disponible
@@ -103,28 +101,32 @@ module.exports.bookProy = (req, res) => {
     });
 };
 
-
-
 module.exports.bookedProy = (req, res) => {
-    const { username } = req.body;
+    const { username, role } = req.body;
 
     // Validar que se recibieron los datos necesarios
     if (!username) {
-        return res.status(400).json({ error: 'Error' });
+        return res.status(400).json({ error: 'Error: Se requiere un username.' });
     }
 
-    // Consulta SQL para insertar una nueva reserva
-    const sql = `SELECT * FROM reservas WHERE username = ? AND fecha >= CURDATE();`;
+    // Declarar sql 
+    let sql = `SELECT * FROM reservas WHERE username = ? AND fecha >= CURDATE();`;
+
+    // Si el rol es 1, modificamos la consulta
+    if (role === 1) {
+        sql = `SELECT * FROM reservas WHERE fecha >= CURDATE();`;
+    }
 
     // Ejecutar la consulta
-    connection.query(sql, [username], (err, results) => { // Agrega username aquí
+    connection.query(sql, role === 1 ? [] : [username], (err, results) => {
         if (err) {
-            console.error('Error al realizar la reserva:', err);
-            return res.status(500).json({ error: 'Error al realizar la reserva' });
+            console.error('Error al realizar la consulta:', err);
+            return res.status(500).json({ error: 'Error al realizar la consulta' });
         }
-        res.status(201).json(results);
+        res.status(200).json(results);
     });
 };
+
 
 module.exports.deleteBooking = (req, res) => {
     const reservaId = req.params.id;
