@@ -21,40 +21,6 @@ module.exports.inventory = (req, res) => {
 
 };
 
-
-// module.exports.addItem = (req, res) => {
-
-//     const table = req.body.table;
-//     var sql = '';
-
-//     const { nro_inv, cod_rec, marca, modelo, sn, estado, fecha_ingreso, vga, hdmi, adicionales } = req.body;
-//     const { id, descripcion, idioma, tipo, ubicacion, instrumento_asociado } = req.body;
-
-//     switch (table) {
-//         case 'proyectores':
-//             sql = 'INSERT INTO proyectores (nro_inv, cod_rec, marca, modelo, sn, estado, ubicacion, fecha_ingreso, vga, hdmi, adicionales) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )';
-//             connection.query(sql, [nro_inv, cod_rec, marca, modelo, sn, estado, ubicacion, fecha_ingreso, vga, hdmi, adicionales], (err, results) => {
-//                 if (err) {
-//                     return res.status(500).json({ message: 'Error al agregar el elemento' });
-//                 }
-//                 res.status(201).json({ message: 'Elemento agregado exitosamente', id: results.insertId });
-//             });
-//             break;
-//         case 'libros':
-//             sql = 'INSERT INTO libros (id, descripcion, idioma, tipo, ubicacion, instrumento_asociado) VALUES (?, ?, ?, ?, ?, ?)';
-//             connection.query(sql, [id, descripcion, idioma, tipo, ubicacion, instrumento_asociado], (err, results) => {
-//                 if (err) {
-//                     return res.status(500).json({ message: 'Error al agregar el elemento' });
-//                 }
-//                 res.status(201).json({ message: 'Elemento agregado exitosamente', id: results.insertId });
-//             });
-//             break;
-//         default:
-//             break;
-//     }
-
-// };
-
 module.exports.addItem = (req, res) => { //Add libro
 
     console.log(req.body);
