@@ -63,8 +63,6 @@ module.exports.addItem = (req, res) => { //Add libro
     })
 }
 
-
-
 module.exports.removeItem = (req, res) => {
 
     const { table, nro_inv } = req.body;

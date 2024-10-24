@@ -114,7 +114,11 @@ module.exports.bookedProy = (req, res) => {
 
     // Si el rol es 1, modificamos la consulta
     if (role === 1) {
-        sql = `SELECT * FROM reservas WHERE fecha >= CURDATE();`;
+        sql = `SELECT r.*, u.phoneNumber
+                FROM reservas r
+                JOIN users u ON r.username = u.username
+                WHERE r.fecha >= CURDATE();
+                `;
     }
 
     // Ejecutar la consulta
@@ -126,7 +130,6 @@ module.exports.bookedProy = (req, res) => {
         res.status(200).json(results);
     });
 };
-
 
 module.exports.deleteBooking = (req, res) => {
     const reservaId = req.params.id;

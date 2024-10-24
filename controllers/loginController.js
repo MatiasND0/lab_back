@@ -28,7 +28,7 @@ module.exports.login = (req, res) => {
                 }
 
                 const token = jwt.sign(
-                    { id: user.id, username: user.username, role: user.role },
+                    { id: user.id, username: user.username, role: user.role, phoneNumber: user.phoneNumber },
                     JWT_SECRET,
                     { expiresIn: '1m' }
                 );
@@ -42,10 +42,10 @@ module.exports.login = (req, res) => {
 } 
 
 module.exports.register = (req, res) => {
-    const { username, password, role } = req.body;
+    const { username, password, role, phoneNumber } = req.body;
 
     // Validaciones simples
-    if (!username || !password || !role) {
+    if (!username || !password || !role || !phoneNumber ) {
         return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
 
@@ -55,8 +55,8 @@ module.exports.register = (req, res) => {
             return res.status(500).json({ message: 'Error al encriptar la contraseña', error: err });
         }
 
-        const sql = 'INSERT INTO users (username, password, role) VALUES (?, ?, ?)';
-        connection.query(sql, [username, hashedPassword, role], (err, results) => {
+        const sql = 'INSERT INTO users (username, password, role, phoneNumber) VALUES (?, ?, ?, ?)';
+        connection.query(sql, [username, hashedPassword, role, phoneNumber], (err, results) => {
             if (err) {
                 return res.status(500).json({ message: 'Error en el servidor', error: err });
             }
